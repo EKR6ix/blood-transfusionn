@@ -1,0 +1,682 @@
+<!doctype html>
+<html lang="km">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>វិញ្ញាសាអនុវត្ត៖ ធនាគារឈាម & ការចាក់បញ្ចូលឈាម (Blood Transfusion & Immunohematology) - ថ្នាក់ BSL ឆ្នាំទី១</title>
+<link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;600;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0b1120;
+  --card: #15203b;
+  --card-border: #1e293b;
+  --primary: #38bdf8;
+  --primary-hover: #0284c7;
+  --success: #22c55e;
+  --danger: #ef4444;
+  --text: #f8fafc;
+  --text-muted: #94a3b8;
+  --accent: #f59e0b;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Kantumruy Pro', 'Inter', system-ui, sans-serif; }
+body { background: var(--bg); color: var(--text); min-height: 100vh; padding: 16px; display: flex; flex-direction: column; align-items: center; }
+.wrap { width: 100%; max-width: 840px; margin: 0 auto; }
+header.hero { text-align: center; margin-bottom: 20px; }
+.hero h1 { font-size: 1.30rem; color: var(--primary); margin-bottom: 6px; line-height: 1.45; }
+.hero p { color: var(--text-muted); font-size: 0.88rem; }
+.card { background: var(--card); border: 1px solid var(--card-border); border-radius: 14px; padding: 22px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+.status-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--card-border); font-size: 0.88rem; }
+.badge { background: #0369a1; color: #bae6fd; padding: 4px 10px; border-radius: 9999px; font-weight: 600; font-size: 0.75rem; }
+.timer-box { font-weight: 700; color: var(--accent); display: flex; align-items: center; gap: 6px; font-size: 1.05rem; }
+.timer-box.urgent { color: var(--danger); }
+.question-title { font-size: 1.05rem; line-height: 1.6; font-weight: 600; margin-bottom: 14px; color: var(--text); }
+.diagram-box { display: flex; justify-content: center; align-items: center; background: #080e1e; border: 1px solid #1e3a8a; border-radius: 10px; padding: 14px; margin-bottom: 16px; }
+.options-grid { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+.option-btn { background: #0b1120; border: 1px solid var(--card-border); color: var(--text); padding: 14px 16px; border-radius: 10px; text-align: left; font-size: 0.94rem; cursor: pointer; transition: all 0.15s ease; line-height: 1.5; display: flex; align-items: flex-start; gap: 10px; }
+.option-btn:hover:not(:disabled) { border-color: var(--primary); background: #1a253c; }
+.option-btn:disabled { cursor: default; }
+.option-btn.correct { background: rgba(34, 197, 94, 0.22) !important; border-color: var(--success) !important; color: #86efac; font-weight: 600; }
+.option-btn.wrong { background: rgba(239, 68, 68, 0.22) !important; border-color: var(--danger) !important; color: #fca5a5; }
+.letter { font-weight: 700; color: var(--primary); font-size: 1.05rem; min-width: 25px; }
+.hint-section { margin-bottom: 16px; }
+.hint-btn { background: none; border: none; color: var(--accent); font-size: 0.88rem; cursor: pointer; text-decoration: underline; padding: 0; }
+.hint-content { display: none; margin-top: 8px; background: rgba(245, 158, 11, 0.12); border-left: 3px solid var(--accent); padding: 10px 14px; border-radius: 4px; font-size: 0.88rem; color: #fde68a; line-height: 1.5; }
+.feedback-box { display: none; background: #0d1a33; border: 1px solid #2563eb; border-radius: 10px; padding: 16px; margin-bottom: 16px; line-height: 1.5; font-size: 0.9rem; }
+.feedback-box h4 { margin-bottom: 8px; color: #93c5fd; font-size: 0.95rem; }
+.controls { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.action-btn { background: var(--primary); color: #090d16; border: none; padding: 10px 22px; border-radius: 8px; font-weight: 700; font-size: 0.92rem; cursor: pointer; transition: background 0.15s; }
+.action-btn:hover { background: var(--primary-hover); }
+.action-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.progress-wrap { margin-top: 20px; }
+.progress-bar-bg { background: #1e293b; height: 8px; border-radius: 9999px; overflow: hidden; }
+.progress-bar-fill { background: var(--primary); height: 100%; width: 3.33%; transition: width 0.3s; }
+.final-screen { display: none; text-align: center; padding: 36px 12px; }
+.final-score { font-size: 3rem; font-weight: 800; color: var(--primary); margin: 16px 0; }
+.review-list { margin-top: 20px; text-align: left; }
+.review-item { border: 1px solid var(--card-border); border-radius: 8px; padding: 12px; margin-bottom: 10px; background: #0b1120; font-size: 0.88rem; }
+.review-item summary { cursor: pointer; font-weight: 700; color: var(--primary); }
+.review-item p { margin-top: 6px; color: #cbd5e1; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <h1>វិញ្ញាសាអនុវត្ត៖ ធនាគារឈាម & ការចាក់បញ្ចូលឈាម (Blood Transfusion & Immunohematology)</h1>
+    <p>ផ្អែកលើស្លាយបង្រៀនសាកលវិទ្យាល័យវិទ្យាសាស្ត្រសុខាភិបាល (UHS) • ៣០ សំណួរគ្លីនិក & មន្ទីរពិសោធន៍ • Auto-Shuffled • ៦០ វិនាទី</p>
+  </header>
+
+  <div class="card" id="quizCard">
+    <div class="status-bar">
+      <span class="badge" id="topicBadge">មេរៀន</span>
+      <span id="qCount" style="font-weight:600;">សំណួរទី 1 នៃ 30</span>
+      <div class="timer-box" id="timerBox">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <span id="timerText">60s</span>
+      </div>
+    </div>
+
+    <div id="diagramContainer" class="diagram-box"></div>
+
+    <div class="question-title" id="questionTitle"></div>
+
+    <div class="hint-section">
+      <button class="hint-btn" id="hintToggleBtn" onclick="toggleHint()">💡 បង្ហាញតម្រុយគ្លីនិក (Show Hint)</button>
+      <div class="hint-content" id="hintContent"></div>
+    </div>
+
+    <div class="options-grid" id="optionsGrid"></div>
+
+    <div class="feedback-box" id="feedbackBox">
+      <h4>ការពន្យល់លម្អិតក្នុងមន្ទីរពិសោធន៍ (Lab Rationale):</h4>
+      <div id="feedbackText"></div>
+    </div>
+
+    <div class="controls">
+      <span style="font-size:0.88rem; color:var(--text-muted);" id="liveScore">ពិន្ទុ: 0 / 0</span>
+      <button class="action-btn" id="nextBtn" onclick="nextQuestion()" disabled>សំណួរបន្ទាប់ →</button>
+    </div>
+  </div>
+
+  <div class="card final-screen" id="finalCard">
+    <h2>បញ្ចប់ការធ្វើតេស្ត!</h2>
+    <p style="margin-top:8px; color:var(--text-muted);">អ្នកបានឆ្លងកាត់ការអនុវត្តវិញ្ញាសា Blood Transfusion & Immunohematology ៣០ សំណួររួចរាល់ហើយ។</p>
+    <div class="final-score" id="finalScoreVal">0%</div>
+    <p id="finalFeedback" style="margin-bottom: 24px; color: #cbd5e1; font-size:1.02rem; line-height:1.6;"></p>
+    <button class="action-btn" onclick="initQuiz()">ធ្វើវិញ្ញាសាសាឡើងវិញ (Shuffle ថ្មី)</button>
+    <div class="review-list" id="reviewContainer"></div>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-bar-bg">
+      <div class="progress-bar-fill" id="progressBar"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const rawQuestions = [
+  {
+    topic: "ABO Discrepancy — Acquired B Antigen",
+    title: "អ្នកជំងឺមហារីកពោះវៀនធំ (Colon cancer) ម្នាក់មានលទ្ធផល ABO Grouping: Forward ឃើញ Anti-A: 4+, Anti-B: 2+; Reverse ឃើញ A1 cells: 0, B cells: 4+។ ផ្អែកលើករណី Acquired B antigen តើយន្តការជីវគីមីណាដែលបង្កឱ្យមានលទ្ធផលនេះ?",
+    hint: "អង់ស៊ីម Deacetylase របស់បាក់តេរីពោះវៀនបំប្លែងស្ករ N-acetylgalactosamine ទៅជា Galactosamine ស្រដៀងស្ករ B។",
+    svg: `<svg width="220" height="85" viewBox="0 0 220 85"><rect x="25" y="25" width="70" height="35" rx="6" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/><text x="60" y="46" fill="#38bdf8" font-size="8.5" text-anchor="middle">A (GalNAc)</text><path d="M 98,42 L 122,42" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrow)"/><rect x="125" y="25" width="70" height="35" rx="6" fill="#1e293b" stroke="#ef4444" stroke-width="2"/><text x="160" y="46" fill="#ef4444" font-size="8.5" text-anchor="middle">Acquired B</text><text x="110" y="18" fill="#f59e0b" font-size="8" text-anchor="middle">Bacterial Deacetylase</text></svg>`,
+    options: [
+      { text: "បាក់តេរីពោះវៀនបញ្ចេញអង់ស៊ីម Deacetylase បំប្លែងស្ករ A ឱ្យស្រដៀងទៅនឹងស្ករ B", isCorrect: true },
+      { text: "កោសិកាមហារីកស្រូបយកម៉ូលេគុលអរម៉ូន Erythropoietin ពីតម្រងនោមទម្លាក់លើកោសិកា", isCorrect: false },
+      { text: "អ្នកជំងឺបានទទួលការបញ្ចូលឈាមខុសប្លែកក្រុម ABO ក្នុងរយៈពេល ២៤ ម៉ោងមុន", isCorrect: false },
+      { text: "អង្គបដិប្រាណ Anti-A1 ក្នុងសេរ៉ូមអ្នកជំងឺធ្វើអន្តរកម្មស្អិតជាមួយប្លាស្មារបស់ខ្លួន", isCorrect: false }
+    ],
+    rationale: "យោងតាមស្លាយមេរៀន Exemple of ABO Discrepancy Caused by an Acquired B Antigen៖ កើតឡើងចំពោះអ្នកជំងឺមហារីកពោះវៀនធំ ឬស្ទះពោះវៀន។ បាក់តេរី Gram-negative (ដូចជា E. coli) បញ្ចេញអង់ស៊ីម Deacetylase ដែលកាត់ផ្តាច់ Acetyl group ពី N-acetylgalactosamine (អង់ទីហ្សែន A) បំប្លែងវាទៅជា Galactosamine ដែលមានរចនាសម្ព័ន្ធស្រដៀង D-galactose ធ្វើឱ្យវាមានប្រតិកម្មខ្សោយជាមួយ Reagent Anti-B លើ Forward grouping។"
+  },
+  {
+    topic: "Transfusion Administration — Incompatible IV Solutions",
+    title: "ពេលកំពុងចាក់បញ្ចូលកំហាប់គ្រាប់ឈាមក្រហម (PRBCs) ហេតុអ្វីបានជាគិលានុបដ្ឋាយិកាត្រូវបានហាមដាច់ខាតមិនឱ្យប្រើសូលុយស្យុង Ringer's Lactate ឬ 5% Dextrose ក្នុងខ្សែបង្ហូរឈាមតែមួយ?",
+    hint: "Ringer's Lactate មាន Calcium ធ្វើឱ្យកកឈាម; Dextrose បង្ក Hypotonic hemolysis ក្នុងបំពង់។",
+    options: [
+      { text: "Ringer's Lactate មានជាតិកាល់ស្យូមអាចបង្កកំណកឈាម រីឯ Dextrose ធ្វើឱ្យបែកគ្រាប់ឈាម", isCorrect: true },
+      { text: "សូលុយស្យុងទាំងពីរនេះធ្វើឱ្យអង់ទីហ្សែន Rh(D) រលាយបាត់ភ្លាមៗនៅក្នុងថង់ឈាម", isCorrect: false },
+      { text: "ជាតិស្ករ Dextrose បំផ្លាញកោសិកាឈាមស Neutrophil ឱ្យក្លាយជាប្លាកែតខុសប្រក្រតី", isCorrect: false },
+      { text: "សារធាតុទាំងពីរនេះរារាំងមិនឱ្យគ្រូពេទ្យពិនិត្យសម្ពាធឈាមរបស់អ្នកជំងឺបានត្រឹមត្រូវ", isCorrect: false }
+    ],
+    rationale: "យោងតាមស្លាយមេរៀន Blood Transfusion (ស្លាយទី ១៦)៖ ត្រូវប្រើតែ Normal Saline (0.9% NaCl) សម្រាប់ Priming និងលាងខ្សែបង្ហូរឈាម។ ហាមដាច់ខាតមិនត្រូវប្រើ Ringer's Lactate ព្រោះវាមានផ្ទុកជាតិ Calcium ដែលទៅបន្សាប Citrate anticoagulant បង្កឱ្យឈាមកកក្នុងបំពង់ (Clotting)។ ហាមប្រើ Dextrose solutions ព្រោះវាធ្វើឱ្យឈាមជួបមជ្ឈដ្ឋាន Hypotonic នាំឱ្យគ្រាប់ឈាមក្រហមហើមបែក (Hemolysis)។"
+  },
+  {
+    topic: "Blood Component Storage — Platelet Agitation & Temperature",
+    title: "ប្លាកែត (Platelets) ត្រូវរក្សាទុកនៅសីតុណ្ហភាព 20-24°C លើម៉ាស៊ីនរលាក់ (Agitator) ជាប់ជានិច្ច។ ប្រសិនបើតម្កល់ទុកចោលស្ងៀមមួយកន្លែងដោយគ្មានចលនារលាក់ តើនឹងមានផលវិបាកអ្វីកើតឡើង?",
+    hint: "គ្មានការរលាក់ ធ្វើឱ្យខ្វះការផ្លាស់ប្តូរឧស្ម័ន បង្កើនជាតិអាស៊ីតឡាក់ទិក pH ធ្លាក់ចុះ និងប្លាកែតខូចមុខងារ។",
+    options: [
+      { text: "ការថយចុះការផ្លាស់ប្តូរឧស្ម័នធ្វើឱ្យកើនឡើងអាស៊ីត Lactic, pH ធ្លាក់ចុះ និងប្លាកែតបាត់បង់មុខងារ", isCorrect: true },
+      { text: "ប្លាកែតទាំងអស់នឹងបំប្លែងខ្លួនទៅជាកោសិកាឈាមក្រហម Erythrocytes ក្នុងរយៈពេល ៥ នាទី", isCorrect: false },
+      { text: "ធ្វើឱ្យសីតុណ្ហភាពក្នុងថង់ឈាមធ្លាក់ចុះមកត្រឹមសូន្យអង្សាសេដោយស្វ័យប្រវត្តិ", isCorrect: false },
+      { text: "បណ្តាលឱ្យប្លាកែតបញ្ចេញអង្គបដិប្រាណ Anti-A និង Anti-B ចូលទៅក្នុងប្លាស្មា", isCorrect: false }
+    ],
+    rationale: "យោងតាមស្លាយមេរៀន Blood Products (Platelets) និងស្តង់ដារធនាគារឈាម AABB៖ ប្លាកែតនៅតែបន្តធ្វើមេតាប៉ូលីសប្រើប្រាស់ O2 និងបញ្ចេញ CO2។ ការរលាក់ជាបន្តបន្ទាប់ (Continuous gentle agitation) ជួយសម្រួលដល់ការជ្រាបផ្លាស់ប្តូរឧស្ម័នកាត់តាមថង់ប្លាស្ទិក។ បើទុកស្ងៀម កង្វះ O2 នឹងជំរុញ Anaerobic glycolysis បង្កើតអាស៊ីត Lactic ធ្វើឱ្យ pH ធ្លាក់ចុះ (<6.2) នាំឱ្យប្លាកែតខូចរូបរាង និងបាត់បង់លទ្ធភាពឃាត់ឈាម។"
+  },
+  {
+    topic: "ABO Discrepancy — A2 Subgroup with Anti-A1",
+    title: "អ្នកជំងឺម្នាក់មានលទ្ធផល ABO Grouping: Forward ឃើញ Anti-A: 4+, Anti-B: 0; Reverse ឃើញ A1 cells: 2+, B cells: 4+។ ដើម្បីដោះស្រាយភាពមិនស៊ីសង្វាក់គ្នានេះ តើអ្នកបច្ចេកទេសត្រូវជ្រើសរើសសារធាតុ Reagent ណាដើម្បីបញ្ជាក់?",
+    hint: "ប្រើ Dolichos biflorus lectin (Anti-A1 lectin) ដើម្បីបញ្ជាក់ក្រុមរង A2 ជាមួយ Anti-A1 antibody។",
+    svg: `<svg width="220" height="85" viewBox="0 0 220 85"><rect x="30" y="20" width="70" height="45" rx="4" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/><text x="65" y="38" fill="#38bdf8" font-size="8.5" text-anchor="middle">Forward: Grp A</text><text x="65" y="54" fill="#94a3b8" font-size="8" text-anchor="middle">Anti-A: 4+</text><rect x="120" y="20" width="70" height="45" rx="4" fill="#1e293b" stroke="#f59e0b" stroke-width="2"/><text x="155" y="38" fill="#f59e0b" font-size="8.5" text-anchor="middle">Reverse: Grp O?</text><text x="155" y="54" fill="#ef4444" font-size="8" text-anchor="middle">A1 cells: 2+</text></svg>`,
+    options: [
+      { text: "ប្រើប្រាស់ Dolichos biflorus lectin (Anti-A1) ដើម្បីផ្ទៀងផ្ទាត់លើកោសិកាអ្នកជំងឺ", isCorrect: true },
+      { text: "បន្ថែមអាស៊ីតក្រពះចូលក្នុងសេរ៉ូមអ្នកជំងឺដើម្បីបន្សាបអង្គបដិប្រាណដែលលើស", isCorrect: false },
+      { text: "ប្រើប្រាស់អង់ស៊ីម Papain ដើម្បីបំផ្លាញអង់ទីហ្សែនទាំងអស់លើកោសិកាឈាមក្រហម", isCorrect: false },
+      { text: "ប្តូរទៅធ្វើតេស្តស្វែងរកមេរោគគ្រុនចាញ់ភ្លាមៗដោយមិនបាច់ដោះស្រាយក្រុមឈាម", isCorrect: false }
+    ],
+    rationale: "យោងតាមស្លាយមេរៀន Anti-A1 antibody និង ABO Subgroups៖ ប្រហែល 1-8% នៃបុគ្គល A2 និង 22-35% នៃ A2B បង្កើត Anti-A1 ក្នុងសេរ៉ូម។ នេះបណ្តាលឱ្យមាន ABO Discrepancy (Forward ជា A តែ Reverse ចេញ O ព្រោះ Anti-A1 ធ្វើឱ្យកក A1 reagent cells)។ ដើម្បីដោះស្រាយ ត្រូវយកកោសិកាអ្នកជំងឺទៅតេស្តជាមួយ Dolichos biflorus lectin (Anti-A1 reagent)៖ បើអវិជ្ជមាន បញ្ជាក់ថាអ្នកជំងឺជាក្រុមរង A2 ដែលមាន Anti-A1។"
+  },
+  {
+    topic: "ABO Discrepancy — Cold Autoantibodies & Pre-warming",
+    title: "អ្នកជំងឺម្នាក់មានលទ្ធផល ABO Grouping កកស្ទះគ្រប់បំពង់ទាំងអស់ (Forward: Anti-A 4+, Anti-B 2+; Reverse: A1 cells 3+, B cells 4+) រួមទាំង Autocontrol វិជ្ជមាននៅសីតុណ្ហភាពបន្ទប់។ តើបច្ចេកទេសណាដែលជួយដោះស្រាយបញ្ហានេះ?",
+    hint: "Cold autoantibodies (Anti-I) ធ្វើសកម្មភាពនៅត្រជាក់; ត្រូវលាងកោសិកាជាមួយទឹកអំបិលក្តៅឧណ្ហៗ និងធ្វើតេស្តនៅ 37°C (Pre-warm)។",
+    options: [
+      { text: "លាងកោសិកាជាមួយទឹកអំបិលក្តៅឧណ្ហៗ និងធ្វើតេស្តឡើងវិញនៅសីតុណ្ហភាព 37°C (Pre-warm technique)", isCorrect: true },
+      { text: "យកសេរ៉ូមអ្នកជំងឺទៅដុតកម្តៅឱ្យពុះដល់ 100°C ដើម្បីបំផ្លាញប្រូតេអ៊ីន Albumin", isCorrect: false },
+      { text: "សន្និដ្ឋានភ្លាមៗថាអ្នកជំងឺមានក្រុមឈាមកម្រ Cis-AB ដោយមិនបាច់ធ្វើតេស្តបន្ថែម", isCorrect: false },
+      { text: "រាយការណ៍ថាអ្នកជំងឺមានក្រុមឈាម AB Rh-negative ដោយផ្អែកលើការកកស្ទះ", isCorrect: false }
+    ],
+    rationale: "យោងតាមស្លាយមេរៀន Exemple of ABO Discrepancy Caused by Cold Autoantibodies៖ Cold autoantibodies (ដូចជា IgM Autoanti-I) បង្កឱ្យមាន Spontaneous agglutination លើគ្រប់កោសិកានៅសីតុណ្ហភាពបន្ទប់ (20-24°C)។ ដំណោះស្រាយស្តង់ដារគឺ ត្រូវលាងកោសិកាអ្នកជំងឺជាមួយ Warm saline (37°C) ដើម្បីដោះលែងអង្គបដិប្រាណចេញពីភ្នាស និងធ្វើតេស្តទាំង Forward និង Reverse ដោយប្រើបច្ចេកទេស Pre-warmed testing នៅ 37°C។"
+  },
+  {
+    topic: "ABO Discrepancy — Rouleaux & Saline Replacement",
+    title: "អ្នកជំងឺម្នាក់មានជំងឺ Multiple Myeloma មានកំហាប់ប្រូតេអ៊ីន Globulin ខ្ពស់ខ្លាំង។ លទ្ធផល Reverse Grouping បង្ហាញការកកស្អិតទាំងបំពង់ A1 cells (2+) និង B cells (2+)។ ក្រោមមីក្រូទស្សន៍ឃើញកោសិកាជង់គ្នាដូចកាក់ (Rouleaux)។ តើត្រូវដោះស្រាយតាមវិធីណា?",
+    hint: "ប្រើបច្ចេកទេស Saline Replacement Technique ដោយបូមសេរ៉ូមចេញហើយជំនួសដោយ Normal Saline ស្មើមាឌ។",
+    options: [
+      { text: "អនុវត្តបច្ចេកទេស Saline Replacement Technique ដោយបូមជៀសសេរ៉ូមចេញហើយជំនួសដោយ Saline", isCorrect: true },
+      { text: "បន្ថែមសូលុយស្យុងអាស៊ីត Formol ចូលដើម្បីរំលាយប្រូតេអ៊ីន Globulin ឱ្យអស់", isCorrect: false },
+      { text: "បដិសេធសំណាកនិងតម្រូវឱ្យអ្នកជំងឺតមចំណីអាហារសាច់រយៈពេលមួយខែពេញ", isCorrect: false },
+      { text: "យកបំពង់សាកល្បងទៅបង្វិល Centrifuge ក្នុងល្បឿន 20,000 rpm រយៈពេលមួយម៉ោង", isCorrect: false }
+    ],
+    rationale: "ស្លាយមេរៀន ABO Grouping Discrepancies (Rouleaux formation) បញ្ជាក់ថា៖ កម្រិត Serum protein ឬ Paraprotein ខ្ពស់ បណ្តាលឱ្យកោសិកាជង់គ្នាជាជួរ (Rouleaux) ដែលមើលទៅដូច Agglutination ពិត។ ដំណោះស្រាយគឺការធ្វើ Saline Replacement Technique៖ បង្វិលបំពង់ឱ្យធ្លាក់កោសិកា រួចបូមយក Serum ចេញ ហើយជំនួសដោយ Normal Saline ក្នុងបរិមាណស្មើគ្នា រួចក្រឡុកអានឡើងវិញ។ បើជា Rouleaux វានឹងរលាយបាត់ទៅជា Negative តែបើជា True agglutination វានឹងនៅកកដដែល។"
+  },
+  {
+    topic: "Transfusion Protocol — First 15-Minute Monitoring",
+    title: "យោងតាមគោលការណ៍ណែនាំសុវត្ថិភាពចាក់បញ្ចូលឈាម ហេតុអ្វីបានជាត្រូវតម្រូវឱ្យចាក់ឈាមក្នុងល្បឿនយឺតៗ (10-15 ដំណក់/នាទី) អំឡុងពេល ១៥ នាទីដំបូងនៃការចាប់ផ្តើម?",
+    hint: "ប្រតិកម្មធ្ងន់ធ្ងរដូចជា Acute Hemolytic Reaction និង Anaphylaxis តែងស្តែងឡើងក្នុងរយៈពេល ១៥ នាទីដំបូង។",
+    options: [
+      { text: "ដើម្បីតាមដាននិងដឹងទាន់ពេលនូវប្រតិកម្មស្រួចស្រាវគំរាមកំហែងអាយុជីវិត (Acute Hemolytic Reaction/Anaphylaxis)", isCorrect: true },
+      { text: "ដើម្បីឱ្យកោសិកាឈាមក្រហមមានពេលបំបែកខ្លួនដោយ Mitosis ក្នុងសរសៃឈាម", isCorrect: false },
+      { text: "ដើម្បីកុំឱ្យម៉ាស៊ីនវាស់សម្ពាធឈាមស្វ័យប្រវត្តិកើនឡើងកម្តៅខ្លាំងពេក", isCorrect: false },
+      { text: "ដើម្បីរង់ចាំឱ្យអរម៉ូន Erythropoietin (EPO) ស្រូបចូលទៅក្នុងខួរឆ្អឹងសិន", isCorrect: false }
+    ],
+    rationale: "យោងតាមស្លាយមេរៀន ដំណាក់កាលនៃការចាក់បញ្ចូលឈាម (ស្លាយទី ១២ និងសំនួរចម្លើយទី ៨)៖ ការចាក់ឈាមត្រូវតែចាប់ផ្តើមយឺតៗ (ប្រហែល 10-15 ដំណក់ក្នុងមួយនាទី) ក្នុងរយៈពេល ១៥ នាទីដំបូង ពីព្រោះប្រសិនបើមានកំហុសឆ្គងច្រឡំក្រុមឈាម ABO (Acute Hemolytic Transfusion Reaction) ឬប្រតិកម្ម Anaphylaxis ធ្ងន់ធ្ងរ វានឹងស្តែងចេញរោគសញ្ញាភ្លាមៗនៅពេលឈាមចូលបានតិចតួច ដែលអាចបញ្ឈប់ការចាក់ទាន់ពេលវេលាសង្គ្រោះជីវិតអ្នកជំងឺ។"
+  },
+  {
+    topic: "Fresh Frozen Plasma (FFP) — Coagulopathy Management",
+    title: "អ្នកជំងឺក្រិនថ្លើមម្នាក់មានការហូរឈាមធ្ងន់ធ្ងរដោយសារកង្វះកត្តាកំណកឈាមជាច្រើនមុខ (Multiple Clotting Factor Deficiencies) ដែលមាន PT/INR = 2.8។ តើផលិតផលឈាមមួយណាជាជម្រើសដ៏សមស្របបំផុតក្នុងការព្យាបាល?",
+    hint: "Fresh Frozen Plasma (FFP) ផ្ទុកគ្រប់កត្តាកំណកឈាមទាំងអស់ និងប្រូតេអ៊ីនប្លាស្មា។",
+    options: [
+      { text: "Fresh Frozen Plasma (FFP / ផ្ទុកគ្រប់កត្តាកំណកឈាមទាំងអស់ដើម្បីកែតម្រូវ PT/INR)", isCorrect: true },
+      { text: "Packed Red Blood Cells (PRBCs) ដែលបានលាងជាមួយទឹកអំបិលស្អាត", isCorrect: false },
+      { text: "Cryoprecipitate តែមួយមុខគត់ក្នុងបរិមាណតិចតួចប្រហែល 5 mL", isCorrect: false },
+      { text: "សូលុយស្យុង 5% Dextrose ចាក់បញ្ចូលក្នុងសរសៃឈាមវ៉ែនកម្រិតលឿន", isCorrect: false }
+    ],
+    rationale: "យោងតាមស្លាយមេរៀន Blood Products (Fresh Frozen Plasma - FFP ស្លាយ ២២)៖ FFP ផ្ទុកទៅដោយទឹក ប្រូតេអ៊ីន អេឡិចត្រូលីត និង 'គ្រប់កត្តាកំណកឈាមទាំងអស់ (All clotting factors)'។ វាត្រូវបានប្រើប្រាស់ជាចម្បងដើម្បីកែតម្រូវបញ្ហាកំណកឈាមចម្រុះ (Coagulopathy / Liver disease) និងទម្លាក់កម្រិត PT/INR ឱ្យមកធម្មតាវិញ។"
+  },
+  {
+    topic: "Cryoprecipitate — Specific Clinical Indications",
+    title: "អ្នកជំងឺស្រីសម្រាលកូនរួចម្នាក់កើតមានជំងឺ DIC ដោយសារការធ្លាក់ឈាមស្បូនខ្លាំង។ ពិនិត្យឈាមឃើញកម្រិត Fibrinogen ធ្លាក់ចុះទាបអាសន្ន (<80 mg/dL)។ តើផលិតផលឈាមប្រមូលផ្តុំណាដែលសំបូរ Fibrinogen ខ្ពស់បំផុត?",
+    hint: "Cryoprecipitate ត្រូវបានប្រើជាចម្បងសម្រាប់អ្នកជំងឺខ្វះ Fibrinogen (១ យូនីតបង្កើន Fibrinogen 5-10 mg/dL)។",
+    options: [
+      { text: "Cryoprecipitate (សំបូរទៅដោយ Fibrinogen, Factor VIII, vWF, និង Factor XIII)", isCorrect: true },
+      { text: "Packed Red Blood Cells (PRBCs) សម្រាប់បង្កើនចំនួនកោសិកាឈាមក្រហម", isCorrect: false },
+      { text: "ប្លាកែតប្រមូលផ្តុំ (Platelet concentrate) ដែលទុកចោលក្នុងទូទឹកកក", isCorrect: false },
+      { text: "ប្លាស្មាស្រស់ធម្មតាដែលមិនបានយកទៅធ្វើ Centrifuge បំបែកកករ", isCorrect: false }
+    ],
+    rationale: "ស្លាយមេរៀន Blood Products (Cryoprecipitate ស្លាយ ២៤) ចែងច្បាស់ថា៖ Cryoprecipitate គឺជាកករដែលប្រមូលបានពីការរលាយ FFP នៅសីតុណ្ហភាពត្រជាក់។ វាសំបូរទៅដោយ Fibrinogen (ប្រហែល 150-250 mg ក្នុងមួយយូនីត), Factor VIII, von Willebrand factor (vWF), និង Factor XIII។ គោលដៅចម្បងគឺប្រើក្នុងករណីខ្វះ Fibrinogen ធ្ងន់ធ្ងរ (DIC, Massive hemorrhage) ដើម្បីបង្កើនកម្រិត Fibrinogen 50-100 mg/dL។"
+  },
+  {
+    topic: "ABO Biochemistry — Terminal Immunodominant Sugars",
+    title: "យោងតាមជីវគីមីនៃប្រព័ន្ធក្រុមឈាម ABO តើម៉ូលេគុលស្ករជាក់លាក់ (Immunodominant sugar) ណាដែលផ្តល់នូវលក្ខណៈអង់ទីហ្សែន B (Antigen B specificity) នៅលើគ្រាប់ឈាមក្រហម?",
+    hint: "អង់ទីហ្សែន B កំណត់ដោយ D-galactose; អង់ទីហ្សែន A កំណត់ដោយ N-acetylgalactosamine; អង់ទីហ្សែន H កំណត់ដោយ L-fucose។",
+    svg: `<svg width="220" height="85" viewBox="0 0 220 85"><rect x="30" y="20" width="70" height="45" rx="4" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/><text x="65" y="38" fill="#38bdf8" font-size="8.5" text-anchor="middle">Antigen A</text><text x="65" y="52" fill="#f8fafc" font-size="7.5" text-anchor="middle">GalNAc</text><rect x="120" y="20" width="70" height="45" rx="4" fill="#1e293b" stroke="#ef4444" stroke-width="2"/><text x="155" y="38" fill="#ef4444" font-size="8.5" text-anchor="middle">Antigen B</text><text x="155" y="52" fill="#f8fafc" font-size="7.5" text-anchor="middle">D-Galactose</text></svg>`,
+    options: [
+      { text: "D-Galactose (ភ្ជាប់ដោយអង់ស៊ីម Galactosyltransferase បង្កើតបានជាអង់ទីហ្សែន B)", isCorrect: true },
+      { text: "N-Acetylgalactosamine (ភ្ជាប់ដោយអង់ស៊ីម Transferase A បង្កើតបានជាអង់ទីហ្សែន A)", isCorrect: false },
+      { text: "L-Fucose (ភ្ជាប់ដោយអង់ស៊ីម Fucosyltransferase បង្កើតបានជាអង់ទីហ្សែន H)", isCorrect: false },
+      { text: "Glucose-6-phosphate (ផលិតដោយអង់ស៊ីម Hexokinase ក្នុងកោសិកាក្រហម)", isCorrect: false }
+    ],
+    rationale: "យោងតាមស្លាយមេរៀន Formation of the B antigen និង Action of ABH Genes៖ Precursor substance ត្រូវបានបន្ថែម L-fucose ដោយ H gene ក្លាយជា H antigen។ ក្រោយមក ហ្សែន B (B gene) បញ្ជាឱ្យផលិតអង់ស៊ីម Galactosyltransferase ដែលភ្ជាប់ស្ករ D-Galactose ទៅលើចុងបញ្ចប់នៃ H substance បង្កើតបានជា B antigen specificity។ ចំណែក N-acetylgalactosamine គឺជាស្កររបស់អង់ទីហ្សែន A។"
+  },
+  {
+    topic: "ABO Genetics — Bombay Phenotype (Oh)",
+    title: "បុគ្គលម្នាក់មានហ្សែន A និង B ពេញលេញ ប៉ុន្តែមានហ្សែន H ក្នុងទម្រង់ Homozygous amorph (Genotype: hh / Bombay phenotype)។ លើការធ្វើតេស្ត ABO Grouping ធម្មតា តើកោសិកាឈាមក្រហមរបស់គាត់នឹងបង្ហាញលទ្ធផលដូចក្រុមឈាមណា?",
+    hint: "គ្មាន H substance ធ្វើឱ្យស្ករ A និង B មិនអាចភ្ជាប់បាន បង្ហាញដូចក្រុមឈាម O តែសេរ៉ូមមាន Anti-H ខ្លាំង។",
+    options: [
+      { text: "បង្ហាញដូចក្រុមឈាម O ព្រោះគ្មាន H substance សម្រាប់ភ្ជាប់ស្ករ A និង B (តែសេរ៉ូមមាន Anti-H ខ្លាំង)", isCorrect: true },
+      { text: "បង្ហាញជាក្រុមឈាម AB ធម្មតាព្រោះហ្សែន A និង B នៅតែដំណើរការសំយោគប្រូតេអ៊ីន", isCorrect: false },
+      { text: "បង្ហាញជាក្រុមឈាម Rh(D) negative ព្រោះប្រព័ន្ធទាំងពីរស្ថិតលើក្រូម៉ូសូមតែមួយ", isCorrect: false },
+      { text: "កោសិកាឈាមក្រហមទាំងអស់រលាយបាត់បង់ជីវិតតាំងពីក្នុងផ្ទៃម្តាយមិនអាចរស់បាន", isCorrect: false }
+    ],
+    rationale: "ស្លាយមេរៀន The 'O' Gene និង Formation of the H antigen បញ្ជាក់ថា៖ មុនពេលស្ករ A ឬ B អាចភ្ជាប់បាន លុះត្រាតែមាន L-fucose ភ្ជាប់ទៅចុងខ្សែ precursor សិន ដែលដំណើរការនេះគ្រប់គ្រងដោយហ្សែន H (Dominant)។ ចំពោះបុគ្គល Bombay phenotype (hh) គាត់ខ្វះ Fucosyltransferase ធ្វើឱ្យគ្មាន H substance ដូច្នេះទោះបីជាមានហ្សែន A ឬ B ក៏ស្ករទាំងនោះមិនអាចតភ្ជាប់បានដែរ។ កោសិកាគាត់នឹងបង្ហាញដូចក្រុម O តែសេរ៉ូមមាន Anti-H ខ្លាំងដែលអាចទទួលឈាមបានតែពីបុគ្គល Bombay ដូចគ្នាដាច់ខាត។"
+  },
+  {
+    topic: "Blood Donor Selection — Aspirin Ingestion Deferral",
+    title: "អ្នកស្ម័គ្រចិត្តបរិច្ចាគឈាមម្នាក់បានលេបថ្នាំ Aspirin ដោយសារឈឺក្បាលកាលពី ៤៨ ម៉ោងមុន។ យោងតាមគោលការណ៍ណែនាំជ្រើសរើសអ្នកផ្តល់ឈាម តើឈាមរបស់គាត់អាចយកទៅកែច្នៃប្រើប្រាស់បានកម្រិតណា?",
+    hint: "Aspirin ប៉ះពាល់មុខងារប្លាកែត ១-៣ ថ្ងៃ; អាចបរិច្ចាគ Whole blood ឬ PRBCs បាន តែមិនអាចយកធ្វើ Platelet concentrate ឡើយ។",
+    options: [
+      { text: "អាចបរិច្ចាគយក PRBCs និងប្លាស្មាបាន ប៉ុន្តែមិនអាចយកទៅចម្រាញ់ធ្វើជាប្លាកែត (Platelets) ឡើយ", isCorrect: true },
+      { text: "ត្រូវពន្យារពេលជាអចិន្ត្រៃយ៍ (Permanently deferred) ដោយមិនអនុញ្ញាតឱ្យផ្តល់ឈាមពេញមួយជីវិត", isCorrect: false },
+      { text: "អាចយកទៅធ្វើជាប្លាកែតបានធម្មតាព្រោះថ្នាំ Aspirin ជួយពង្រឹងកម្លាំងប្លាកែតឱ្យស្អិតល្អ", isCorrect: false },
+      { text: "ត្រូវពន្យារពេលបណ្តោះអាសន្នរយៈពេលមួយឆ្នាំពេញទើបអាចត្រឡប់មកបរិច្ចាគឈាមវិញបាន", isCorrect: false }
+    ],
+    rationale: "យោងតាមស្លាយមេរៀន អ្នកបរិច្ចាគដែលអាចទទួលយកបាន (ស្លាយទី ៧)៖ Aspirin (Motrin) លេបក្នុងរយៈពេល ៧២ ម៉ោង (within 72 hrs) នឹងរារាំងមុខងារប្លាកែត (Decreases platelet function) រយៈពេល ១ ដល់ ៣ ថ្ងៃ។ ដូច្នេះ បុគ្គលនេះមិនត្រូវបានអនុញ្ញាតឱ្យបរិច្ចាគប្លាកែត (Plateletpheresis) ឡើយ ឬប្លោកឈាម Whole blood របស់គាត់មិនអាចយកទៅកែច្នៃធ្វើជា Platelet concentrate បានទេ ប៉ុន្តែអាចយកផ្នែក Red Blood Cells (PRBCs) និង Plasma មកប្រើប្រាស់បានធម្មតា។"
+  },
+  {
+    topic: "Blood Donor Selection — Vaccine Deferral Timelines",
+    title: "យោងតាមគោលការណ៍ណែនាំជាតិស្តីពីការជ្រើសរើសអ្នកផ្តល់ឈាម (NBTC Guidelines) តើរយៈពេលពន្យារពេលបណ្តោះអាសន្ន (Temporary deferral) ចំពោះអ្នកទើបចាក់វ៉ាក់សាំងការពារជំងឺឆ្កែឆ្កួត (Rabies post-exposure) ត្រូវបានកំណត់ប៉ុន្មាន?",
+    hint: "Rabies (therapeutic / post-exposure) ពន្យារពេល ១ ឆ្នាំ; Measles/Rubella ពន្យារពេល ៤ សប្តាហ៍; Live vaccine ពន្យារពេល ២ សប្តាហ៍។",
+    options: [
+      { text: "ពន្យារពេលរយៈពេល ១ ឆ្នាំពេញ (1 year deferral) ក្រោយពេលចាក់ព្យាបាលបង្ការ", isCorrect: true },
+      { text: "ពន្យារពេលត្រឹមតែ ២ សប្តាហ៍ប៉ុណ្ណោះដូចវ៉ាក់សាំងកូវីដ", isCorrect: false },
+      { text: "ពន្យារពេលរយៈពេល ៤ សប្តាហ៍ដូចវ៉ាក់សាំងកញ្ជ្រោល Rubella", isCorrect: false },
+      { text: "មិនបាច់ពន្យារពេលឡើយ អាចបរិច្ចាគបានភ្លាមៗនៅថ្ងៃបន្ទាប់", isCorrect: false }
+    ],
+    rationale: "ស្លាយមេរៀន ពន្យាពេលបរិច្ចាគឈាមជាបណ្តោះអាសន្ន (ស្លាយទី ៨) បញ្ជាក់ច្បាស់ថា៖ Rabies (therapeutic post-exposure) ត្រូវពន្យារពេល ១ ឆ្នាំ (1 year); Hepatitis B Immune Globulin (HBIG) ពន្យារពេល ១ ឆ្នាំ; Measles/Rubella ត្រូវពន្យារពេល ៤ សប្តាហ៍; ហើយ Live attenuated vaccines ធម្មតាត្រូវពន្យារពេល ២ សប្តាហ៍។"
+  },
+  {
+    topic: "Blood Donor Selection — Physiological Criteria",
+    title: "អ្នកស្ម័គ្រចិត្តម្នាក់ជាស្ត្រីអាយុ ២២ ឆ្នាំ មានទម្ងន់ 42 kg, សម្ពាធឈាម 110/70 mmHg, និងកម្រិត Hgb = 13.0 g/dL។ ផ្អែកលើលក្ខខណ្ឌវិនិច្ឆ័យអ្នកផ្តល់ឈាម តើគាត់មានសិទ្ធិបរិច្ចាគឈាមដែរឬទេ?",
+    hint: "ទម្ងន់អប្បបរមាត្រូវតែលើសពី 45 kg; ទម្ងន់ 42 kg មិនគ្រប់លក្ខខណ្ឌឡើយ។",
+    options: [
+      { text: "មិនអាចបរិច្ចាគបានទេ ពីព្រោះទម្ងន់របស់គាត់មិនទាន់គ្រប់កម្រិតអប្បបរមា 45 kg ឡើយ", isCorrect: true },
+      { text: "អាចបរិច្ចាគបានធម្មតា ពីព្រោះកម្រិតអេម៉ូក្លូប៊ីន និងសម្ពាធឈាមរបស់គាត់ល្អឥតខ្ចោះ", isCorrect: false },
+      { text: "អាចបរិច្ចាគបានតែប្លាស្មាប៉ុណ្ណោះ ដោយមិនអនុញ្ញាតឱ្យបូមកោសិកាឈាមក្រហម", isCorrect: false },
+      { text: "ត្រូវពន្យារពេលជាអចិន្ត្រៃយ៍ពេញមួយជីវិតដោយសារតែសរសៃឈាមតូចពេក", isCorrect: false }
+    ],
+    rationale: "យោងតាមស្លាយមេរៀន ការចុះឈ្មោះអ្នកបរិច្ចាក (ស្លាយទី ៣-៤)៖ លក្ខខណ្ឌកាយសម្បទាអប្បបរមាតម្រូវឱ្យ៖ 1. អាយុ 18-60 ឆ្នាំ, 2. ទម្ងន់អប្បបរមា > 45 kg (Minimum weight >45 kg)។ បុគ្គលដែលមានទម្ងន់ក្រោម 45 kg (ទីនេះ 42 kg) ប្រឈមនឹងគ្រោះថ្នាក់ Hypovolemia ធ្ងន់ធ្ងរពេលបូមឈាម 350 mL ព្រមទាំងសមាមាត្រ Anticoagulant ក្នុងថង់នឹងលើសលប់ បង្កឱ្យខូចគ្រាប់ឈាម។"
+  },
+  {
+    topic: "PRBC Transfusion — Therapeutic Dose Response",
+    title: "អ្នកជំងឺស្លេកស្លាំងម្នាក់មានទម្ងន់ 60 kg គ្មានការហូរឈាមបន្តឡើយ ពិនិត្យឃើញកម្រិតអេម៉ូក្លូប៊ីនដើម Hgb = 5.5 g/dL។ ក្រោយពេលចាក់បញ្ចូលកំហាប់គ្រាប់ឈាមក្រហម PRBCs ចំនួន ២ យូនីត (2 units) តើកម្រិត Hgb រំពឹងទុកនឹងកើនឡើងដល់ប៉ុន្មាន?",
+    hint: "PRBC 1 unit បង្កើន Hgb ប្រហែល 1 g/dL (Hct ឡើង ~3%); 2 units នឹងបង្កើន Hgb ប្រហែល 2 g/dL។",
+    options: [
+      { text: "កើនឡើងដល់ប្រហែល 7.5 g/dL (PRBCs 1 យូនីតបង្កើន Hgb បានប្រហែល 1 g/dL)", isCorrect: true },
+      { text: "កើនឡើងដល់ប្រហែល 12.0 g/dL ស្មើនឹងកម្រិតធម្មតារបស់មនុស្សទូទៅភ្លាមៗ", isCorrect: false },
+      { text: "កម្រិតអេម៉ូក្លូប៊ីននៅតែរក្សា 5.5 g/dL ដដែលព្រោះឈាមត្រូវរំលាយអស់ក្នុងថ្លើម", isCorrect: false },
+      { text: "កើនឡើងតែបន្តិចបន្តួចប្រហែល 0.1 g/dL ប៉ុណ្ណោះក្នុងរយៈពេល ២ សប្តាហ៍", isCorrect: false }
+    ],
+    rationale: "យោងតាមស្លាយមេរៀន Blood Products (Packed Red Blood Cells - PRBCs ស្លាយ ២១)៖ ច្បាប់គ្លីនិកស្តង់ដារ '1 unit PRBC = ↑ 1 g/dL Hgb (និងកើន Hematocrit ប្រហែល 3%)' ចំពោះមនុស្សពេញវ័យទម្ងន់មធ្យមដែលគ្មានការហូរឈាមបន្ត។ ដូច្នេះការចាក់បញ្ចូល 2 យូនីត នឹងរំពឹងថាកើនឡើងប្រហែល 2 g/dL ធ្វើឱ្យ Hgb ឡើងពី 5.5 ទៅប្រហែល 7.5 g/dL។"
+  },
+  {
+    topic: "Massive Transfusion — Citrate Toxicity & Hypocalcemia",
+    title: "អ្នកជំងឺជួបគ្រោះថ្នាក់ចរាចរណ៍បាត់បង់ឈាមធ្ងន់ធ្ងរ បានទទួលការចាក់បញ្ចូលឈាមយ៉ាងគំហុកអស់ ៨ យូនីតក្នុងរយៈពេល ២ ម៉ោង។ ក្រោយមកអ្នកជំងឺកើតមានអាការៈស្ពឹកចុងដៃចុងជើង និងកន្ត្រាក់សាច់ដុំ (Tetany)។ តើមូលហេតុជីវគីមីអ្វីដែលបណ្តាលឱ្យមានរោគសញ្ញានេះ?",
+    hint: "Sodium Citrate ក្នុងថង់ឈាមចងភ្ជាប់អ៊ីយ៉ុង Calcium សេរីក្នុងឈាម បង្កឱ្យកើត Hypocalcemia។",
+    options: [
+      { text: "សារធាតុ Sodium Citrate ក្នុងថង់ឈាមចងភ្ជាប់អ៊ីយ៉ុងកាល់ស្យូម (Ca2+) បណ្តាលឱ្យ Hypocalcemia", isCorrect: true },
+      { text: "ការឡើងកម្តៅខ្លាំងនៃគ្រាប់ឈាមក្រហមធ្វើឱ្យសរសៃប្រសាទសាច់ដុំខូចខាត", isCorrect: false },
+      { text: "ការខ្វះជាតិស្ករ Glucose ក្នុងឈាមដោយសារតែគ្រាប់ឈាមក្រហមបឺតស្រូបអស់", isCorrect: false },
+      { text: "កោសិកាឈាមស Neutrophil បញ្ចេញជាតិពុលបំផ្លាញខួរឆ្អឹងខ្នងរបស់អ្នកជំងឺ", isCorrect: false }
+    ],
+    rationale: "ស្លាយមេរៀន PRBCs (ស្លាយ ២១) ចែងថា៖ ថង់ឈាមប្រើប្រាស់ Sodium Citrate ជាសារធាតុ anticoagulant ដែលមានមុខងារចងភ្ជាប់ជាតិកាល់ស្យូម ('Sodium Citrate binds calcium')។ ក្នុងការចាក់ឈាមច្រើនគំហុក (Massive Transfusion) ថ្លើមមិនអាចបំប្លែង Citrate ទាន់ពេលទេ ធ្វើឱ្យ Citrate លើសលប់ទៅចាប់ចង Ionized Calcium ក្នុងឈាមអ្នកជំងឺ បង្កឱ្យកើត Hypocalcemia (ស្ពឹកស្រពន់ កន្ត្រាក់សាច់ដុំ Arrhythmia) ដែលតម្រូវឱ្យគ្រូពេទ្យពិនិត្យ និងផ្តល់ Calcium gluconate ប៉ះប៉ូវ។"
+  },
+  {
+    topic: "Rh Blood Group System — Immunogenicity of D Antigen",
+    title: "ក្នុងចំណោមអង់ទីហ្សែនទាំង ៥ សំខាន់នៃប្រព័ន្ធ Rhesus (D, C, c, E, e) ហេតុអ្វីបានជាអង់ទីហ្សែន D ត្រូវបានគេចាត់ទុកថាជា 'Rhesus factor' ចម្បងជាងគេក្នុងគ្លីនិក?",
+    hint: "អង់ទីហ្សែន D មានឥទ្ធិពលរំញោចប្រព័ន្ធភាពស៊ាំខ្លាំងបំផុត (Most immunogenic) ងាយបង្កើត Anti-D។",
+    options: [
+      { text: "អង់ទីហ្សែន D មានឥទ្ធិពលរំញោចភាពស៊ាំខ្លាំងជាងគេបំផុត (Most immunogenic) ងាយបង្កើត Anti-D បំផ្លាញកោសិកា", isCorrect: true },
+      { text: "អង់ទីហ្សែន D គឺជាអង់ទីហ្សែនតែមួយគត់ដែលកើតឡើងពីធម្មជាតិតាំងពីទើបនឹងកើត", isCorrect: false },
+      { text: "អង់ទីហ្សែន D មានទំហំធំជាងអង់ទីហ្សែនដទៃទៀត ១០០ ដងនៅលើផ្ទៃកោសិកាក្រហម", isCorrect: false },
+      { text: "អង់ទីហ្សែន D ផលិតតែអង្គបដិប្រាណប្រភេទ IgM ដែលមិនអាចឆ្លងកាត់ទងសុកបាន", isCorrect: false }
+    ],
+    rationale: "យោងតាមស្លាយមេរៀន កំណត់ប្រព័ន្ធ Rhesus (ស្លាយទី ១៦-១៨)៖ ប្រព័ន្ធ Rh មានអង់ទីហ្សែនជាង ៤០ តែ ៥ សំខាន់គឺ D, C, c, E, e។ អង់ទីហ្សែន D គឺជាកត្តាកំណត់ Rh positive ឬ Rh negative ពីព្រោះវាមាន Immunogenicity ខ្ពស់បំផុត (ខ្លាំងជាងគេបន្ទាប់ពី ABO)។ បុគ្គល Rh-negative ដែលប៉ះពាល់នឹងកោសិកា D-positive (តាមការចាក់ឈាម ឬពពោះ) ជាង ៥០-៧០% នឹងបង្កើតអង្គបដិប្រាណ Anti-D (IgG) ដែលអាចបង្ក Hemolytic Transfusion Reaction ឬ HDN ធ្ងន់ធ្ងរ។"
+  },
+  {
+    topic: "ABO Discrepancy — Mixed-Field Agglutination",
+    title: "អ្នកជំងឺគ្រោះថ្នាក់ចរាចរណ៍ក្រុមឈាម A ម្នាក់ បានទទួលការចាក់បញ្ចូលឈាមសង្គ្រោះបន្ទាន់ដោយកំហាប់គ្រាប់ឈាម O Negative កាលពីម្សិលមិញ។ ថ្ងៃនេះពេលធ្វើ Forward typing ជាមួយ Anti-A ឃើញលទ្ធផលកកជាដុំតូចៗលាយឡំកោសិការាយសេរី (Mixed-field reaction)។ តើនេះបណ្តាលមកពីអ្វី?",
+    hint: "វត្តមានកោសិកាឈាមក្រហមពីរក្រុមខុសគ្នា (កោសិកា A របស់ខ្លួនឯង និងកោសិកា O ពីអ្នកផ្តល់)។",
+    svg: `<svg width="220" height="85" viewBox="0 0 220 85"><rect x="30" y="15" width="160" height="55" rx="6" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/><circle cx="70" cy="42" r="10" fill="#ef4444"/><circle cx="85" cy="38" r="10" fill="#ef4444"/><circle cx="78" cy="50" r="10" fill="#ef4444"/><text x="80" y="46" fill="#f8fafc" font-size="7">Clump (A)</text><circle cx="130" cy="35" r="7" fill="#38bdf8" opacity="0.7"/><circle cx="150" cy="45" r="7" fill="#38bdf8" opacity="0.7"/><circle cx="165" cy="32" r="7" fill="#38bdf8" opacity="0.7"/><text x="148" y="65" fill="#38bdf8" font-size="7">Free Unagglutinated (O)</text></svg>`,
+    options: [
+      { text: "វត្តមានកោសិកាក្រហមពីរក្រុមលាយគ្នា (កោសិកា A របស់អ្នកជំងឺកកស្ទះ និងកោសិកា O មិនកក)", isCorrect: true },
+      { text: "ម៉ាស៊ីនបង្វិលកាតជែល Centrifuge ដំណើរការយឺតពេកមិនអាចទម្លាក់កោសិកាបាន", isCorrect: false },
+      { text: "អ្នកជំងឺបានកើតជំងឺមហារីកឈាមស្រួចស្រាវដែលបំផ្លាញអង់ទីហ្សែន A ទាំងអស់", isCorrect: false },
+      { text: "សារធាតុ Reagent Anti-A ត្រូវខូចគុណភាពដោយសារទុកចោលត្រូវពន្លឺព្រះអាទិត្យ", isCorrect: false }
+    ],
+    rationale: "យោងតាមស្លាយ ABO Grouping Discrepancies (Mixed field reactions ស្លាយ ១០)៖ ប្រតិកម្មចម្រុះ Mixed-field agglutination (កោសិកាមួយចំនួនកកជាដុំ ហើយកោសិកាឯទៀតនៅរាយទោល) កើតឡើងដោយសារមានវត្តមានកោសិកាឈាមពីរក្រុមខុសគ្នាក្នុងចរន្តឈាមតែមួយ (Dual red cell population)។ មូលហេតុញឹកញាប់បំផុតគឺ អ្នកជំងឺក្រុម A, B ឬ AB ធ្លាប់បានទទួលការបញ្ចូលឈាមក្រុម O (Recent transfusion of different ABO group) ឬការប្តូរខួរឆ្អឹង (Bone marrow transplant)។"
+  },
+  {
+    topic: "ABO Genetics — Cis-AB Inheritance Anomaly",
+    title: "បុរសម្នាក់មានក្រុមឈាម AB រៀបការជាមួយស្ត្រីក្រុមឈាម O បែរជាបង្កើតបានកូនម្នាក់មានក្រុមឈាម O (Phenotype: O) ស្របច្បាប់។ ផ្អែកលើពន្ធុវិទ្យាកម្រ Cis-AB តើបាតុភូតនេះអាចកើតឡើងតាមយន្តការណា?",
+    hint: "ហ្សែន A និង B ស្ថិតនៅលើក្រូម៉ូសូមតែមួយ (Cis-AB allele) ដូច្នេះ Allele មួយទៀតរបស់ឪពុកជា O (Cis-AB/O)។",
+    options: [
+      { text: "ឪពុកមាន Genotype Cis-AB/O (ហ្សែន A និង B លើក្រូម៉ូសូមតែមួយ) ហើយបានចែក Allele O ទៅឱ្យកូន", isCorrect: true },
+      { text: "ម្តាយមានអង់ទីហ្សែន Rh(D) ខ្លាំងជ្រុលដែលទៅបំប្លែងក្រុមឈាមរបស់កូនឱ្យក្លាយជា O", isCorrect: false },
+      { text: "ជាកំហុសបច្ចេកទេសមន្ទីរពិសោធន៍ ព្រោះតាមពន្ធុវិទ្យាមនុស្សក្រុម AB មិនអាចមានកូនក្រុម O ដាច់ខាត", isCorrect: false },
+      { text: "កុមារបានបាត់បង់អង់ទីហ្សែនទាំងអស់ដោយសារតែការខ្វះជីវជាតិវីតាមីន B12", isCorrect: false }
+    ],
+    rationale: "យោងតាមស្លាយមេរៀន ៧. កំណត់ក្រុមឈាម Cis-AB (ស្លាយ ១៤-១៥)៖ ក្នុង Cis-AB ហ្សែន A និង B ត្រូវបានចម្លងរួមគ្នានៅលើក្រូម៉ូសូមតែមួយ (Single chromosome) ដោយសារ gene mutation។ ប្រសិនបើឪពុកមាន Genotype ជា Cis-AB/O គាត់អាចចែក Allele O ទៅឱ្យកូន។ នៅពេលកូនទទួលបាន Allele O មួយទៀតពីម្តាយ (Genotype: O/O) កូននឹងមាន Phenotype ជាក្រុមឈាម O ស្របច្បាប់ ដែលផ្ទុយពីទ្រឹស្តី AB ធម្មតា (Trans-AB)។"
+  },
+  {
+    topic: "Antigen-Antibody Reactions — Hemolysis as Positive Result",
+    title: "ពេលធ្វើតេស្ត Compatibility testing ឬ ABO grouping ក្នុងបំពង់កែវ ប្រសិនបើអ្នកបច្ចេកទេសសង្កេតឃើញទឹកខាងលើឡើងពណ៌ក្រហមថ្លា ដោយគ្មានកករគ្រាប់ឈាម (Hemolysis) តើត្រូវបកស្រាយលទ្ធផលនេះដូចម្តេច?",
+    hint: "Hemolysis ត្រូវបានចាត់ទុកជាប្រតិកម្មវិជ្ជមានស្មើនឹង Agglutination ដោយសារ Complement activation។",
+    options: [
+      { text: "ចាត់ទុកជាប្រតិកម្មវិជ្ជមាន (Positive reaction) ព្រោះ Complement ត្រូវបានធ្វើឱ្យសកម្មបំបែកកោសិកា", isCorrect: true },
+      { text: "ចាត់ទុកជាប្រតិកម្មអវិជ្ជមាន (Negative reaction) ព្រោះមិនឃើញមានដុំកក Agglutination ឡើយ", isCorrect: false },
+      { text: "ចាត់ទុកជាការបរាជ័យនៃតេស្តដោយសារការច្រឡំដាក់ទឹកអាស៊ីត hydrochloric", isCorrect: false },
+      { text: "ត្រូវចាក់ទឹកនោមចូលបន្ថែមដើម្បីបន្សាបពណ៌ក្រហមឱ្យវិលមកថ្លាធម្មតាវិញ", isCorrect: false }
+    ],
+    rationale: "យោងតាមស្លាយមេរៀន Hemolysis (ស្លាយទី ៩) និង Grading System (ស្លាយ ១២)៖ នៅក្នុង Immunohematology ប្រតិកម្មបែកគ្រាប់ឈាម (Hemolysis) បណ្តាលមកពីអង្គបដិប្រាណ IgM ឬ IgG ចងភ្ជាប់អង់ទីហ្សែន និងធ្វើឱ្យ Complement pathway សកម្ម បង្កើត Membrane Attack Complex (MAC) ធ្លាយបែកគ្រាប់ឈាម។ ហេតុនេះ Hemolysis ត្រូវបានកត់ត្រាជា 'Positive reaction' ស្មើនឹងការកកឈាម (Agglutination) ដែរ។"
+  },
+  {
+    topic: "Neonatal Immunohematology — Missing Reverse Typing Antibodies",
+    title: "ទារកទើបនឹងកើតអាយុ ២ ថ្ងៃម្នាក់ ធ្វើតេស្ត ABO Grouping បង្ហាញលទ្ធផល៖ Forward typing ឃើញ Anti-A: 0, Anti-B: 4+ (Group B); ប៉ុន្តែ Reverse typing ឃើញ A1 cells: 0, B cells: 0 (មិនកកទាំងពីរ)។ តើការបកស្រាយណាសមស្របបំផុត?",
+    hint: "ទារកទើបកើតមិនទាន់ផលិត Isohemagglutinins ធម្មជាតិដោយខ្លួនឯងទេ (កើតមាននៅអាយុ ៣-៦ ខែ)។",
+    options: [
+      { text: "ជាលក្ខណៈសរីរវិទ្យាធម្មតារបស់ទារក ព្រោះទារកមិនទាន់ផលិតអង្គបដិប្រាណ ABO ដោយខ្លួនឯងឡើយ", isCorrect: true },
+      { text: "ទារកមានជំងឺខ្វះប្រព័ន្ធភាពស៊ាំពីកំណើតធ្ងន់ធ្ងរដែលមិនអាចរស់រានមានជីវិតបាន", isCorrect: false },
+      { text: "កោសិកា A1 reagent cells ត្រូវខូចគុណភាពដោយសារតែការទុកដាក់មិនត្រឹមត្រូវ", isCorrect: false },
+      { text: "ទារកមានក្រុមឈាម Bombay phenotype ដែលត្រូវកែប្រែទិន្នន័យទៅជាក្រុម O ភ្លាមៗ", isCorrect: false }
+    ],
+    rationale: "ស្លាយមេរៀន Antigens and Antibodies (Exceptions include: Neonates ស្លាយ ១០) បញ្ជាក់ថា៖ ទារកទើបនឹងកើតមិនទាន់ផលិតអង្គបដិប្រាណធម្មជាតិ (Naturally occurring antibodies: Anti-A, Anti-B) ដោយខ្លួនឯងឡើយ។ អង្គបដិប្រាណទាំងនេះទើបតែចាប់ផ្តើមផលិតនៅអាយុ ៣ ទៅ ៦ ខែក្រោយកើត។ អង្គបដិប្រាណ IgG ណាដែលមានក្នុងឈាមទារក គឺបានមកពីម្តាយឆ្លងកាត់សុក។ ដូច្នេះ Reverse grouping មិនអាចយកជាការបានទេចំពោះទារកទើបកើត។"
+  },
+  {
+    topic: "Kidd Blood Group System — Delayed Hemolytic Reactions (DHTR)",
+    title: "អង្គបដិប្រាណក្នុងប្រព័ន្ធ Kidd System (Anti-Jka, Anti-Jkb) ត្រូវបានគេស្គាល់ថាជា 'មេបង្កគ្រោះថ្នាក់លាក់មុខ' នៃប្រតិកម្មចាក់ឈាមយឺតយ៉ាវ (Delayed Hemolytic Transfusion Reaction - DHTR)។ ហេតុអ្វីបានជាអង្គបដិប្រាណនេះពិបាករកឃើញមុនពេលចាក់ឈាម?",
+    hint: "កម្រិត Antibody titer ធ្លាក់ចុះទាបយ៉ាងលឿនក្រោម threshold ដែលតេស្ត Antibody screen អាចចាប់បាន។",
+    options: [
+      { text: "កម្រិត Antibody titer ធ្លាក់ចុះទាបយ៉ាងលឿនក្នុងប្លាស្មា ធ្វើឱ្យតេស្តពិនិត្យមុនចាក់ឈាមចាប់មិនដឹង", isCorrect: true },
+      { text: "ពួកវាជាអង្គបដិប្រាណដែលរស់នៅតែក្នុងកោសិកាថ្លើមដោយមិនដែលចេញមកក្នុងឈាម", isCorrect: false },
+      { text: "ពួកវាអាចបំប្លែងខ្លួនទៅជាអរម៉ូន Insulin ធ្វើឱ្យម៉ាស៊ីនវិភាគឈាមយល់ច្រឡំ", isCorrect: false },
+      { text: "ពួកវាមានសកម្មភាពតែនៅសីតុណ្ហភាពត្រជាក់ខ្លាំងក្រោមសូន្យអង្សាសេប៉ុណ្ណោះ", isCorrect: false }
+    ],
+    rationale: "យោងតាមស្លាយមេរៀន Kidd Blood Group System (ស្លាយ ២៣) និងចំណេះដឹងធនាគារឈាម៖ អង្គបដិប្រាណ Anti-Jka និង Anti-Jkb ល្បីខាងបង្ក Delayed Hemolytic Transfusion Reaction (DHTR) ពីព្រោះក្រោយការរំញោច កម្រិត Titer របស់វាធ្លាក់ចុះទាបយ៉ាងឆាប់រហ័សរហូតដល់ Undetectable levels លើការធ្វើ Pre-transfusion antibody screen។ ពេលអ្នកជំងឺទទួលឈាមដែលមានអង់ទីហ្សែន Jka ម្តងទៀត ប្រព័ន្ធចងចាំ Anamnestic response នឹងផលិត Anti-Jka យ៉ាងគំហុកកម្ទេចគ្រាប់ឈាមក្រោយចាក់ប៉ុន្មានថ្ងៃ។"
+  },
+  {
+    topic: "Duffy Blood Group System — Plasmodium vivax Receptor",
+    title: "នៅទ្វីបអាហ្វ្រិក បុគ្គលភាគច្រើនមាន Phenotype នៃប្រព័ន្ធ Duffy ជា Fy(a-b-)។ តើកង្វះអង់ទីហ្សែន Fya និង Fyb លើគ្រាប់ឈាមក្រហមផ្តល់ផលប្រយោជន៍ការពារជំងឺអ្វី?",
+    hint: "អង់ទីហ្សែន Duffy ដើរតួជា Receptor សម្រាប់មេរោគគ្រុនចាញ់ Plasmodium vivax ជ្រៀតចូលក្នុង RBC។",
+    options: [
+      { text: "ផ្តល់ភាពស៊ាំការពារពីកំណើតមិនឱ្យឆ្លងមេរោគគ្រុនចាញ់ប្រភេទ Plasmodium vivax", isCorrect: true },
+      { text: "ការពារមិនឱ្យកើតជំងឺខ្វះជាតិដែកក្នុងអំឡុងពេលហាត់ប្រាណកម្លាំងបាយ", isCorrect: false },
+      { text: "ជួយឱ្យកោសិកាឈាមក្រហមមានអាយុកាលរស់នៅបានយូរជាង ២០០ ថ្ងៃ", isCorrect: false },
+      { text: "ការពារមិនឱ្យមានការកកឈាមក្នុងសរសៃឈាមបេះដូងពេលមានរបួស", isCorrect: false }
+    ],
+    rationale: "ស្លាយមេរៀន Duffy Blood Group System (ស្លាយ ២២) បញ្ជាក់ពីសារៈសំខាន់៖ អង់ទីហ្សែន Duffy Glycoprotein (Fya/Fyb) គឺជាច្រកទ្វារទទួល (Receptor) ដែលប៉ារ៉ាស៊ីតគ្រុនចាញ់ Plasmodium vivax ប្រើប្រាស់ដើម្បីទម្លុះចូលទៅក្នុងកោសិកាឈាមក្រហម។ បុគ្គលដែលមាន Phenotype Fy(a-b-) មិនមាន Receptor នេះឡើយ ធ្វើឱ្យពួកគេមានភាពស៊ាំពីកំណើតធន់នឹងការឆ្លងមេរោគ P. vivax malaria។"
+  },
+  {
+    topic: "Kell Blood Group System — Severe HDN Mechanism",
+    title: "អង្គបដិប្រាណ Anti-K (Kell system) អាចបង្កឱ្យមានជំងឺ Hemolytic Disease of the Fetus and Newborn (HDFN) យ៉ាងធ្ងន់ធ្ងរ។ តើអ្វីជាយន្តការពិសេសដែលធ្វើឱ្យ Anti-K បង្កភាពស្លេកស្លាំងធ្ងន់ធ្ងរដល់គភ៌ ខុសប្លែកពី Anti-D?",
+    hint: "Anti-K បំផ្លាញកោសិកា Erythroid Progenitor cells ក្នុងខួរឆ្អឹងគភ៌ផ្ទាល់ នាំឱ្យគាបសង្កត់ការផលិតឈាម។",
+    options: [
+      { text: "បំផ្លាញកោសិកា Erythroid Progenitors ក្នុងខួរឆ្អឹងគភ៌ផ្ទាល់ បង្កឱ្យគាបសង្កត់ការផលិតឈាម", isCorrect: true },
+      { text: "រំលាយបំបែកតែជាតិស្ករគ្លុយកូសក្នុងទឹកភ្លោះរបស់ម្តាយដោយមិនប៉ះពាល់គភ៌", isCorrect: false },
+      { text: "ជំរុញឱ្យខួរឆ្អឹងគភ៌ផលិតកោសិកាឈាមស Eosinophil ជំនួសគ្រាប់ឈាមក្រហម", isCorrect: false },
+      { text: "រារាំងការលូតលាស់នៃបំពង់រំលាយអាហាររបស់ទារកនៅត្រីមាសទីមួយ", isCorrect: false }
+    ],
+    rationale: "យោងតាមស្លាយ Kell Blood Group System (ស្លាយ ២១)៖ ខុសពី Anti-D ដែលបំផ្លាញតែកោសិកាក្រហមទុំក្នុងចរន្តឈាម អង់ទីហ្សែន K (Kell) មានវត្តមាននៅលើកោសិកាដើមឈាមក្រហម Early erythroid progenitors (CFU-E, BFU-E) ក្នុងខួរឆ្អឹង។ ដូច្នេះ Anti-K មិនត្រឹមតែបង្ក Hemolysis ប៉ុណ្ណោះទេ ថែមទាំងបំផ្លាញ Erythroid progenitors គាបសង្កត់ Erythropoiesis (Marrow suppression) នាំឱ្យគភ៌ស្លេកស្លាំងធ្ងន់ធ្ងរខ្លាំង។"
+  },
+  {
+    topic: "Lewis Blood Group System — Soluble Plasma Antigen Absorption",
+    title: "តើលក្ខណៈជីវសាស្ត្រពិសេសមួយណាដែលធ្វើឱ្យប្រព័ន្ធក្រុមឈាម Lewis System (Lea, Leb) ខុសប្លែកពីប្រព័ន្ធក្រុមឈាមដទៃទៀត?",
+    hint: "អង់ទីហ្សែន Lewis មិនមែនផលិតចេញពី RBC ទេ តែជាសារធាតុរលាយក្នុងប្លាស្មាដែលស្រូបមកទំលើភ្នាស RBC។",
+    options: [
+      { text: "អង់ទីហ្សែន Lewis មិនមែនជាធាតុដើមនៃភ្នាស RBC ទេ តែជាសារធាតុរលាយក្នុងប្លាស្មាដែលស្រូបមកទំលើផ្ទៃកោសិកា", isCorrect: true },
+      { text: "អង់ទីហ្សែន Lewis ត្រូវបានផលិតឡើងផ្តាច់មុខដោយកោសិកាឈាមស Basophils ក្នុងខួរឆ្អឹង", isCorrect: false },
+      { text: "អង់ទីហ្សែន Lewis បាត់បង់ពីខ្លួនមនុស្សទាំងស្រុងនៅពេលឈានចូលវ័យជំទង់", isCorrect: false },
+      { text: "អង់ទីហ្សែន Lewis មានផ្ទុកអាតូមជាតិដែក Fe2+ នៅចំកណ្តាលរចនាសម្ព័ន្ធរបស់វា", isCorrect: false }
+    ],
+    rationale: "ស្លាយមេរៀន Lewis Blood Group System (ស្លាយ ២៤) បញ្ជាក់យ៉ាងច្បាស់ថា៖ 'វាមិនមែនសុទ្ធតែជា erythrocytic group system ទេ ប៉ុន្តែវាជា secretion system'។ អង់ទីហ្សែន Lewis គឺជា Glycosphingolipids រលាយដែលមានវត្តមាននៅក្នុងប្លាស្មា និងទឹករំអិល។ វត្តមានរបស់ពួកវានៅលើផ្ទៃ RBCs គឺកើតឡើងដោយសារការស្រូបយកពីប្លាស្មាមកតោងលើភ្នាស (Adsorption onto the RBC membrane)។ ក្នុងពេលមានផ្ទៃពោះ អង់ទីហ្សែននេះអាចរបូតចេញពី RBCs បង្ហាញ Phenotype Le(a-b-) បណ្តោះអាសន្ន។"
+  },
+  {
+    topic: "Blood Cold Chain Logistics — Shipping Temperatures",
+    title: "យោងតាមបទដ្ឋានដឹកជញ្ជូនឈាម និងសមាសធាតុឈាម (Shipping Guidelines) នៃស្លាយមេរៀន តើកម្រិតសីតុណ្ហភាពស្តង់ដារសម្រាប់ការដឹកជញ្ជូនឈាម Whole Blood / PRBCs និងប្លាកែត Platelets ត្រូវបានកំណត់យ៉ាងដូចម្តេច?",
+    hint: "Whole blood/PRBCs ដឹកជញ្ជូននៅ 1-10°C; Platelets ដឹកជញ្ជូន និងស្តុកនៅ 20-24°C។",
+    options: [
+      { text: "Whole blood និង PRBCs ដឹកជញ្ជូននៅ 1 ទៅ 10°C រីឯ Platelets ដឹកជញ្ជូននៅ 20 ទៅ 24°C", isCorrect: true },
+      { text: "Whole blood ដឹកជញ្ជូននៅ -20°C រីឯ Platelets ដឹកជញ្ជូនលើទឹកកកស្ងួតជានិច្ច", isCorrect: false },
+      { text: "គ្រប់ផលិតផលឈាមទាំងអស់ត្រូវដឹកជញ្ជូននៅសីតុណ្ហភាព 37°C ដូចក្នុងខ្លួនមនុស្ស", isCorrect: false },
+      { text: "Platelets ដឹកជញ្ជូននៅ 4°C រីឯ PRBCs ដឹកជញ្ជូននៅសីតុណ្ហភាពបន្ទប់", isCorrect: false }
+    ],
+    rationale: "យោងតាមស្លាយមេរៀន កំណត់លក្ខណៈសម្រាប់ការដឹកជញ្ជូនឈាម (Shipping ស្លាយ ១២-១៣)៖ Whole blood, RBCs (PRBCs), និង Thawed plasma ត្រូវដឹកជញ្ជូនក្នុងប្រអប់ត្រជាក់នៅសីតុណ្ហភាព 1 ដល់ 10°C (ខណៈការស្តុកក្នុងទូគឺ 2-6°C)។ ចំណែកឯ Platelets ត្រូវតែរក្សាទុក និងដឹកជញ្ជូននៅសីតុណ្ហភាព 20 ដល់ 24°C (Room temperature)។ ផលិតផលកក Frozen products (FFP, Cryo) ត្រូវដឹកជញ្ជូនជាមួយ Dry ice។"
+  },
+  {
+    topic: "Pre-transfusion Compatibility — Emergency Uncrossmatched Protocol",
+    title: "អ្នកជំងឺសង្គ្រោះបន្ទាន់ម្នាក់កំពុងហូរឈាមគំរាមកំហែងដល់អាយុជីវិត ត្រូវការឈាមជាបន្ទាន់ក្នុងរយៈពេល ២ នាទី ដោយគ្មានពេលគ្រប់គ្រាន់ដើម្បីធ្វើ Crossmatch ពេញលេញឡើយ។ តើផលិតផលឈាមកំហាប់ក្រហមប្រភេទណាដែលត្រូវបញ្ចេញប្រើប្រាស់ជាបន្ទាន់?",
+    hint: "O Negative (Universal donor) គ្មានអង់ទីហ្សែន A, B, និង D ជៀសវាង Acute Hemolytic Reaction។",
+    options: [
+      { text: "O Negative Uncrossmatched Packed Red Blood Cells (Universal red cell donor)", isCorrect: true },
+      { text: "AB Positive Whole Blood ព្រោះជា Universal recipient មានគ្រប់អង់ទីហ្សែន", isCorrect: false },
+      { text: "A Positive PRBCs ព្រោះជាក្រុមឈាមដែលជួបប្រទះញឹកញាប់ជាងគេក្នុងសង្គម", isCorrect: false },
+      { text: "រង់ចាំយ៉ាងហោចណាស់ ៤៥ នាទីឱ្យធ្វើតេស្ត Crossmatch រួចរាល់ទើបអាចចាក់បាន", isCorrect: false }
+    ],
+    rationale: "ស្លាយមេរៀន គោលការណ៍សុវត្ថិភាព និង PRBCs (ស្លាយ ២១) ចែងថា៖ ក្នុងស្ថានភាពសង្គ្រោះបន្ទាន់បំផុត (Extreme emergency/Exsanguinating hemorrhage) ដែលមិនអាចរង់ចាំការធ្វើ Type & Crossmatch បាន ឈាមដែលត្រូវបញ្ចេញប្រើប្រាស់ភ្លាមៗគឺ O Negative Uncrossmatched PRBCs (ជាពិសេសចំពោះស្ត្រីវ័យបន្តពូជ ដើម្បីការពារការបង្កើត Anti-D)។ កោសិកា O- គ្មានអង់ទីហ្សែន A, B ឬ D ឡើយ ដូច្នេះអង្គបដិប្រាណរបស់អ្នកទទួលមិនអាចកម្ទេចវាភ្លាមៗបានទេ។"
+  },
+  {
+    topic: "Compatibility Testing — Major Crossmatch Significance",
+    title: "តើគោលបំណងស្នូលនៃការធ្វើតេស្ត Major Crossmatch មុនពេលចាក់បញ្ចូលឈាម គឺដើម្បីស្វែងរកអ្វី?",
+    hint: "ស្វែងរកអង្គបដិប្រាណក្នុងសេរ៉ូមអ្នកទទួល ដែលអាចប្រឆាំងនឹងអង់ទីហ្សែនលើគ្រាប់ឈាមក្រហមអ្នកផ្តល់។",
+    svg: `<svg width="220" height="85" viewBox="0 0 220 85"><rect x="25" y="22" width="75" height="42" rx="4" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/><text x="62.5" y="38" fill="#38bdf8" font-size="8" text-anchor="middle">Patient Serum</text><text x="62.5" y="52" fill="#94a3b8" font-size="7.5" text-anchor="middle">(Antibodies?)</text><text x="110" y="46" fill="#f59e0b" font-size="14" text-anchor="middle">+</text><rect x="120" y="22" width="75" height="42" rx="4" fill="#1e293b" stroke="#ef4444" stroke-width="2"/><text x="157.5" y="38" fill="#ef4444" font-size="8" text-anchor="middle">Donor RBCs</text><text x="157.5" y="52" fill="#94a3b8" font-size="7.5" text-anchor="middle">(Antigens)</text></svg>`,
+    options: [
+      { text: "ស្វែងរកអង្គបដិប្រាណក្នុងសេរ៉ូមអ្នកទទួលដែលប្រឆាំងនឹងអង់ទីហ្សែនលើគ្រាប់ឈាមអ្នកផ្តល់", isCorrect: true },
+      { text: "ស្វែងរកអង់ទីហ្សែនលើកោសិកាឈាមសរបស់អ្នកទទួលដែលប្រឆាំងនឹងប្លាស្មាអ្នកផ្តល់", isCorrect: false },
+      { text: "វាស់កម្រិតជាតិស្ករ Glucose និងជាតិខ្លាញ់ Cholesterol ក្នុងប្លោកឈាមអ្នកផ្តល់", isCorrect: false },
+      { text: "ត្រួតពិនិត្យមើលថាតើអ្នកជំងឺមានផ្ទុកមេរោគអេដស៍ ឬរលាកថ្លើមប្រភេទបេដែរឬទេ", isCorrect: false }
+    ],
+    rationale: "យោងតាមស្លាយមេរៀន Crossmatch (ស្លាយទី ១០ នៃមេរៀនទី ២)៖ Major Crossmatch គឺជាការយកសេរ៉ូម ឬប្លាស្មារបស់អ្នកទទួល (Recipient serum/plasma ដែលអាចមាន Antibodies) មកលាយជាមួយគ្រាប់ឈាមក្រហមរបស់អ្នកផ្តល់ (Donor RBCs ដែលមាន Antigens)។ គោលបំណងចម្បងគឺដើម្បីធានាថាអ្នកទទួលមិនមាន Antibodies ប្រឆាំងនឹងកោសិកាឈាមក្រហមរបស់អ្នកផ្តល់ឡើយ ជៀសវាង Acute Hemolytic Transfusion Reaction។"
+  },
+  {
+    topic: "Blood Bank Serology — Gel Card Agglutination Grading",
+    title: "ក្នុងការអានលទ្ធផលតេស្តក្រុមឈាម ឬ Crossmatch លើបន្ទះ Matrix Gel Card តើលទ្ធផលប្រតិកម្មកម្រិត 4+ (Grade 4+ Reaction) បង្ហាញរូបរាងយ៉ាងដូចម្តេច?",
+    hint: "កោសិកាកកស្ទះជាខ្សែបន្ទាត់រឹងមាំមួយនៅផ្ទៃខាងលើបង្អស់នៃស្រទាប់ Gel (Solid band at top)។",
+    options: [
+      { text: "កោសិកាកកស្ទះជាបន្ទះរឹងមាំមួយនៅផ្ទៃខាងលើបង្អស់នៃជែល (Solid red band at the top of gel)", isCorrect: true },
+      { text: "កោសិកាទាំងអស់ធ្លាក់ចុះទៅកកកុញនៅបាតក្រោមបង្អស់នៃបំពង់ជែល (Pellet at bottom)", isCorrect: false },
+      { text: "កោសិការាយប៉ាយស្មើគ្នានៅពាក់កណ្តាលជែលដោយគ្មានការកកស្ទះ", isCorrect: false },
+      { text: "ទឹកខាងលើឡើងពណ៌បៃតងចាស់ដោយសារការរលាយនៃគ្រាប់ឈាមស", isCorrect: false }
+    ],
+    rationale: "យោងតាមស្លាយ Typical readings in a Matrix Gel card (ស្លាយ ១១)៖ ក្នុងបច្ចេកវិទ្យា Gel card៖ ប្រតិកម្ម 4+ គឺកោសិកាឈាមក្រហមកកស្អិតជាដុំធំតែមួយ ជាប់គាំងនៅផ្ទៃខាងលើបង្អស់នៃ Microtube gel (Solid band at the top)។ បើអវិជ្ជមាន (0 Reaction) កោសិកាមិនកកទេ ហើយធ្លាក់ឆ្លងកាត់ជែលទៅកកជាដុំនៅបាតក្រោមបង្អស់ (Pellet at the bottom of the microtube)។"
+  },
+  {
+    topic: "Massive Transfusion Protocol — Balanced Component Therapy",
+    title: "ក្នុងពិធីសារចាក់បញ្ចូលឈាមគំហុក (Massive Transfusion Protocol - MTP) សម្រាប់អ្នកជំងឺប៉ះទង្គិចហូរឈាមខ្លាំង តើសមាមាត្ររវាង PRBCs : FFP : Platelets ត្រូវបានណែនាំក្នុងកម្រិតណាដើម្បីការពារ Lethal Triad?",
+    hint: "សមាមាត្រតុល្យភាពស្មើគ្នា 1:1:1 (Damage control resuscitation)។",
+    options: [
+      { text: "សមាមាត្រស្មើគ្នា 1:1:1 (1 unit PRBC : 1 unit FFP : 1 unit Platelets)", isCorrect: true },
+      { text: "សមាមាត្រ 10:1:0 (ប្រើតែ PRBCs ឱ្យបានច្រើនដោយមិនបាច់ប្រើប្លាស្មា)", isCorrect: false },
+      { text: "សមាមាត្រ 1:5:10 (ប្រើតែប្លាកែត និងប្លាស្មាដោយមិនបាច់ប្រើកោសិកាក្រហម)", isCorrect: false },
+      { text: "សមាមាត្រ 4:1:0 ជាមួយការបន្ថែមទឹកសេរ៉ូមប្រៃ Normal Saline ៥ លីត្រ", isCorrect: false }
+    ],
+    rationale: "យោងតាមស្លាយមេរៀន Blood Products (MTP / Massive Transfusion) និងការណែនាំសង្គ្រោះបន្ទាន់៖ ក្នុង Massive Transfusion ការចាក់តែ PRBCs និង Crystalloids នឹងធ្វើឱ្យរាវកត្តាកំណកឈាម និងប្លាកែត (Dilutional coagulopathy) បង្កឱ្យកើត Lethal Triad (Hypothermia, Acidosis, Coagulopathy)។ ស្តង់ដារបច្ចុប្បន្នគឺការផ្តល់ Balanced transfusion ក្នុងសមាមាត្រ 1:1:1 (PRBC : FFP : Platelets) ដើម្បីធ្វើត្រាប់តាមសមាសធាតុ Whole blood ស្តារមុខងារ Hemostasis បានល្អបំផុត។"
+  }
+];
+
+function shuffleArray(arr) {
+  const newArr = [...arr];
+  for (let i = newArr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
+  }
+  return newArr;
+}
+
+let activeQuestions = [];
+let currentIndex = 0;
+let score = 0;
+let timeLeft = 60;
+let timerInterval = null;
+let answered = false;
+let userResults = [];
+
+function initQuiz() {
+  activeQuestions = shuffleArray(rawQuestions).map(q => {
+    return {
+      ...q,
+      options: shuffleArray(q.options)
+    };
+  });
+  
+  currentIndex = 0;
+  score = 0;
+  userResults = [];
+  document.getElementById('finalCard').style.display = 'none';
+  document.getElementById('quizCard').style.display = 'block';
+  loadQuestion(currentIndex);
+}
+
+function loadQuestion(index) {
+  answered = false;
+  timeLeft = 60;
+  clearInterval(timerInterval);
+  
+  const q = activeQuestions[index];
+  document.getElementById('topicBadge').textContent = q.topic;
+  document.getElementById('qCount').textContent = `សំណួរទី ${index + 1} នៃ ${activeQuestions.length}`;
+  document.getElementById('questionTitle').textContent = `${index + 1}. ${q.title}`;
+  
+  const diagBox = document.getElementById('diagramContainer');
+  if (q.svg) {
+    diagBox.innerHTML = q.svg;
+    diagBox.style.display = 'flex';
+  } else {
+    diagBox.innerHTML = '';
+    diagBox.style.display = 'none';
+  }
+
+  document.getElementById('hintContent').textContent = q.hint;
+  document.getElementById('hintContent').style.display = 'none';
+  document.getElementById('feedbackBox').style.display = 'none';
+  document.getElementById('nextBtn').disabled = true;
+  document.getElementById('nextBtn').textContent = (index === activeQuestions.length - 1) ? "ពិនិត្យលទ្ធផល →" : "សំណួរបន្ទាប់ →";
+  
+  const optionsGrid = document.getElementById('optionsGrid');
+  optionsGrid.innerHTML = '';
+  q.options.forEach((optObj, optIdx) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.innerHTML = `<span class="letter">${String.fromCharCode(65 + optIdx)}.</span> <span>${optObj.text}</span>`;
+    btn.onclick = () => selectOption(optIdx);
+    optionsGrid.appendChild(btn);
+  });
+  
+  updateTimerUI();
+  timerInterval = setInterval(() => {
+    if (timeLeft > 0) {
+      timeLeft--;
+      updateTimerUI();
+    } else {
+      clearInterval(timerInterval);
+      if (!answered) {
+        handleTimeout();
+      }
+    }
+  }, 1000);
+  
+  updateProgress();
+}
+
+function updateTimerUI() {
+  const el = document.getElementById('timerText');
+  const box = document.getElementById('timerBox');
+  el.textContent = timeLeft + 's';
+  if (timeLeft <= 10) {
+    box.classList.add('urgent');
+  } else {
+    box.classList.remove('urgent');
+  }
+}
+
+function toggleHint() {
+  const h = document.getElementById('hintContent');
+  h.style.display = h.style.display === 'none' ? 'block' : 'none';
+}
+
+function selectOption(chosenIdx) {
+  if (answered) return;
+  answered = true;
+  clearInterval(timerInterval);
+  
+  const q = activeQuestions[currentIndex];
+  const buttons = document.querySelectorAll('.option-btn');
+  buttons.forEach(btn => btn.disabled = true);
+  
+  const correctIdx = q.options.findIndex(o => o.isCorrect);
+  const isCorrect = q.options[chosenIdx].isCorrect;
+  
+  if (isCorrect) {
+    score++;
+    buttons[chosenIdx].classList.add('correct');
+  } else {
+    buttons[chosenIdx].classList.add('wrong');
+    buttons[correctIdx].classList.add('correct');
+  }
+  
+  userResults.push({
+    q: q.title,
+    chosen: q.options[chosenIdx].text,
+    correctText: q.options[correctIdx].text,
+    isCorrect: isCorrect,
+    why: q.rationale
+  });
+  
+  document.getElementById('liveScore').textContent = `ពិន្ទុ: ${score} / ${currentIndex + 1}`;
+  document.getElementById('feedbackText').textContent = q.rationale;
+  document.getElementById('feedbackBox').style.display = 'block';
+  document.getElementById('nextBtn').disabled = false;
+}
+
+function handleTimeout() {
+  answered = true;
+  const q = activeQuestions[currentIndex];
+  const buttons = document.querySelectorAll('.option-btn');
+  buttons.forEach(btn => btn.disabled = true);
+  const correctIdx = q.options.findIndex(o => o.isCorrect);
+  buttons[correctIdx].classList.add('correct');
+  
+  userResults.push({
+    q: q.title,
+    chosen: "អស់ពេល (Time Expired)",
+    correctText: q.options[correctIdx].text,
+    isCorrect: false,
+    why: q.rationale
+  });
+  
+  document.getElementById('feedbackText').innerHTML = '<strong style="color:#ef4444;">អស់ពេល ៦០ វិនាទី! (Time Expired)</strong><br>' + q.rationale;
+  document.getElementById('feedbackBox').style.display = 'block';
+  document.getElementById('nextBtn').disabled = false;
+}
+
+function nextQuestion() {
+  currentIndex++;
+  if (currentIndex < activeQuestions.length) {
+    loadQuestion(currentIndex);
+  } else {
+    showFinalResults();
+  }
+}
+
+function updateProgress() {
+  const pct = ((currentIndex + 1) / activeQuestions.length) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+}
+
+function showFinalResults() {
+  document.getElementById('quizCard').style.display = 'none';
+  document.getElementById('finalCard').style.display = 'block';
+  const pct = Math.round((score / activeQuestions.length) * 100);
+  document.getElementById('finalScoreVal').textContent = `${score} / ${activeQuestions.length} (${pct}%)`;
+  
+  let msg = '';
+  if (pct >= 80) msg = 'ល្អប្រសើរណាស់! អ្នកយល់ដឹងច្បាស់លាស់ពីគោលការណ៍ Immunohematology ការដោះស្រាយ ABO Discrepancies និងសុវត្ថិភាពនៃការចាក់បញ្ចូលឈាម។';
+  else if (pct >= 60) msg = 'លទ្ធផលល្អបង្គួរ! គួររំលឹកបន្ថែមលើជីវគីមីនៃប្រព័ន្ធ ABH, អនុក្រុម A2 ជាមួយ Anti-A1, និងលក្ខខណ្ឌជ្រើសរើសអ្នកផ្តល់ឈាម។';
+  else msg = 'ត្រូវរំលឹកមេរៀនឡើងវិញ ជាពិសេសការបកស្រាយ Crossmatch, សីតុណ្ហភាពរក្សាទុកផលិតផលឈាម, និងយន្តការ Acquired B antigen។';
+  document.getElementById('finalFeedback').textContent = msg;
+
+  const reviewEl = document.getElementById('reviewContainer');
+  reviewEl.innerHTML = '<h3 style="margin-bottom:12px; color:var(--primary);">ពិនិត្យចម្លើយលម្អិត (Blood Transfusion Case Review):</h3>' + 
+    userResults.map((r, i) => `
+      <details class="review-item">
+        <summary>${i + 1}. ${r.isCorrect ? "✓ ត្រឹមត្រូវ" : "✗ ខុស"} — ${r.q.substring(0, 50)}...</summary>
+        <p><strong>សំណួរពេញលេញ៖</strong> ${r.q}</p>
+        <p><strong>ចម្លើយរបស់អ្នក៖</strong> <span style="color:${r.isCorrect ? '#86efac' : '#fca5a5'}">${r.chosen}</span></p>
+        <p><strong>ចម្លើយត្រឹមត្រូវ៖</strong> <span style="color:#86efac">${r.correctText}</span></p>
+        <p><strong>ការពន្យល់លម្អិត៖</strong> ${r.why}</p>
+      </details>
+    `).join('');
+}
+
+window.onload = initQuiz;
+</script>
+</body>
+</html>
